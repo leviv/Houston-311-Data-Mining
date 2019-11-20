@@ -1,0 +1,36 @@
+Houston 311 Service Requests Data Mining Project
+Stephen Huang, Levi Villarreal, Joshua Wong, Andrew Young
+
+Problem Statement
+
+Data
+The dataset consisted of 399953 service requests made to 311 in the Houston area. Each record included information about the request, including various location attributes, the type of request, the time it was made and closed, and the trash/recycling information of the requester.
+
+Method
+Many attributes were removed from the data set due to their irrelevancy or redundancy to the analysis and to reduce the correlation between attributes. The following attributes were removed:
+
+Case number - This was dropped because the case number is a unique identifier assigned to every 311 request, and thus could not be used to classify anything.
+Trash Quad - There are requests that are not related to trash collection. Those requests might be misclassified because they are in a different trash quad as other requests in the dataset.
+Recycle Quad - Same as Trash Quad
+Trash Day - Same as Trash Quad
+Heavy Trash Day - Same as Trash Quad
+Recycle day - Same as Trash Quad
+SR Location - Same reasoning as case number.
+Tax ID - This ID is unique to the property that requested it.
+Key Map - This attribute is used in the cities internal system to keep track of requests and does not have any actual relation to the request
+Due Date - We are interested in predicting overdueness, and that it its own seperate column.
+Date Closed - Same reasoning as due date.
+Title - This is a another unique identifier assigned to every 311 request, and thus could not be used to classify anything.
+x - We already have latitude, and this attribute an approximation of latitude.
+y - We already have longitude, and this attribute an approximation of longitude.
+latitude - This is too speficific for our needs, and we have other location metrics.
+longitude - same as latitude
+
+After removing unnecessary attributes, requests that were not closed at the time the dataset was created were removed as we are trying to predict how long each request is overdue at time of completion. We also cleaned certain attributes, such as "County" and "District," where there were duplicate entries that are not exact copies. We then dropped all records that had at least one attribute with a NaN value, as it would be difficult to accurately fill in these values based on other requests.
+We then used the "SR Create Date" to determine the month in which the request was made. This attribute is our only temporal attribute other than "overdue" and would be used to see if seasonality has anything to do with how much a request is overdue.
+
+Challenges
+
+Results
+
+Next Steps
