@@ -26,8 +26,11 @@ y - We already have longitude, and this attribute an approximation of longitude.
 latitude - This is too speficific for our needs, and we have other location metrics.
 longitude - same as latitude
 
-After removing unnecessary attributes, requests that were not closed at the time the dataset was created were removed as we are trying to predict how long each request is overdue at time of completion. We also cleaned certain attributes, such as "County" and "District," where there were duplicate entries that are not exact copies. We then dropped all records that had at least one attribute with a NaN value, as it would be difficult to accurately fill in these values based on other requests.
+After removing unnecessary attributes, requests that were not closed at the time the dataset was created were removed as we are trying to predict how long each request is overdue at time of completion. The "Status" attribute was subsequently removed. We also cleaned certain attributes, such as "County" and "District," where there were duplicate entries that are not exact copies. We then dropped all records that had at least one attribute with a NaN value, as it would be difficult to accurately fill in these values based on other requests.
 We then used the "SR Create Date" to determine the month in which the request was made. This attribute is our only temporal attribute other than "overdue" and would be used to see if seasonality has anything to do with how much a request is overdue.
+
+The class label "Overdue" was then binned for classification models. We chose to bin the data into on time tasks (negative values), tasks done within a week past due date (0 < x < 7), tasks done within a month past due date (7 <= x < 30), tasks done over a month past due date (x >= 30).
+
 
 Challenges
 
