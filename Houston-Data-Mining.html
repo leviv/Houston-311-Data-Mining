@@ -13157,11 +13157,15 @@ div#notebook {
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_score</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="k">import</span> <span class="n">StandardScaler</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="k">import</span> <span class="n">PCA</span>
-<span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span>
+<span class="kn">from</span> <span class="nn">imblearn.over_sampling</span> <span class="k">import</span> <span class="n">SMOTE</span>
+<span class="kn">from</span> <span class="nn">imblearn.pipeline</span> <span class="k">import</span> <span class="n">Pipeline</span>
 <span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="k">import</span> <span class="n">SVC</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">train_test_split</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="k">import</span> <span class="n">tree</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">accuracy_score</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="k">import</span> <span class="n">cross_val_predict</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">confusion_matrix</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="k">import</span> <span class="n">classification_report</span>
 <span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">VotingClassifier</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -14472,7 +14476,7 @@ Name: OVERDUE, dtype: int64
     <span class="n">num_data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">prev_column</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">num_data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
-<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">num_data</span><span class="p">,</span> <span class="n">train_size</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="n">train</span><span class="p">,</span> <span class="n">test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">num_data</span><span class="p">,</span> <span class="n">train_size</span> <span class="o">=</span> <span class="mf">0.005</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.005</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -14536,10 +14540,10 @@ Name: OVERDUE, dtype: int64
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Month       720
-More        477
-On Time    5292
-Week        958
+<pre>Month       58
+More        52
+On Time    537
+Week        97
 Name: OVERDUE, dtype: int64
 </pre>
 </div>
@@ -14564,9 +14568,9 @@ Name: OVERDUE, dtype: int64
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">features_train</span><span class="p">,</span> <span class="n">features_test</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">,</span> <span class="n">labels_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training set size:&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">labels_train</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Test set size:    &#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">labels_test</span><span class="p">))</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">DecisionTreeClassifier</span><span class="p">()</span>
-<span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
-<span class="n">predict_labels_test</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features_test</span><span class="p">)</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;dt&#39;</span><span class="p">,</span><span class="n">tree</span><span class="o">.</span><span class="n">DecisionTreeClassifier</span><span class="p">())])</span>
+<span class="n">dtt</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">features_train</span><span class="p">,</span> <span class="n">labels_train</span><span class="p">)</span>
+<span class="n">predict_labels_test</span> <span class="o">=</span> <span class="n">dtt</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">features_test</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Accuracy of decision tree classifier:&#39;</span><span class="p">,</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">labels_test</span><span class="p">,</span> <span class="n">predict_labels_test</span><span class="p">))</span>
 </pre></div>
 
@@ -14584,9 +14588,59 @@ Name: OVERDUE, dtype: int64
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Training set size: 5957
-Test set size:     1490
-Accuracy of decision tree classifier: 0.702013422818792
+<pre>Training set size: 595
+Test set size:     149
+Accuracy of decision tree classifier: 0.5503355704697986
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 15   9  23  11]
+ [ 11  24  15   2]
+ [ 37  29 405  66]
+ [ 16   3  50  28]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.19      0.26      0.22        58
+        More       0.37      0.46      0.41        52
+     On Time       0.82      0.75      0.79       537
+        Week       0.26      0.29      0.27        97
+
+    accuracy                           0.63       744
+   macro avg       0.41      0.44      0.42       744
+weighted avg       0.67      0.63      0.65       744
+
 </pre>
 </div>
 </div>
@@ -14604,12 +14658,11 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">svm</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span><span class="n">StandardScaler</span><span class="p">()),(</span><span class="s1">&#39;reduce_dim&#39;</span><span class="p">,</span><span class="n">PCA</span><span class="p">()),(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span><span class="n">SVC</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="s1">&#39;scale&#39;</span><span class="p">))])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">svm</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span><span class="n">StandardScaler</span><span class="p">()),(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;reduce_dim&#39;</span><span class="p">,</span><span class="n">PCA</span><span class="p">()),(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span><span class="n">SVC</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="s1">&#39;scale&#39;</span><span class="p">))])</span>
 <span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1">#&#39;reduce_dim__n_components&#39;: list(range(5, 11)),</span>
     <span class="s1">&#39;clf__kernel&#39;</span><span class="p">:(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span><span class="s1">&#39;poly&#39;</span><span class="p">)</span>
 <span class="p">}</span>
 <span class="n">pipedsvm</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">svm</span><span class="p">,</span><span class="n">param_grid</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">iid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -14631,7 +14684,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Official accuracy: 0.7165314979632773
+<pre>Official accuracy: 0.558167648659607
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">pipedsvm</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 21  14  11  12]
+ [ 11  24  10   7]
+ [ 76  44 326  91]
+ [ 25  10  25  37]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.16      0.36      0.22        58
+        More       0.26      0.46      0.33        52
+     On Time       0.88      0.61      0.72       537
+        Week       0.25      0.38      0.30        97
+
+    accuracy                           0.55       744
+   macro avg       0.39      0.45      0.39       744
+weighted avg       0.70      0.55      0.60       744
+
 </pre>
 </div>
 </div>
@@ -14649,11 +14752,11 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="k">import</span> <span class="n">MLPClassifier</span>
-<span class="n">nn</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span><span class="n">StandardScaler</span><span class="p">()),(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span><span class="n">MLPClassifier</span><span class="p">())])</span>
+<span class="n">nn</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span><span class="n">StandardScaler</span><span class="p">()),(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;clf&#39;</span><span class="p">,</span><span class="n">MLPClassifier</span><span class="p">())])</span>
 <span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;clf__hidden_layer_sizes&#39;</span><span class="p">:((</span><span class="mi">50</span><span class="p">,),(</span><span class="mi">60</span><span class="p">,)),</span>
     <span class="s1">&#39;clf__activation&#39;</span><span class="p">:(</span><span class="s1">&#39;logistic&#39;</span><span class="p">,</span><span class="s1">&#39;tanh&#39;</span><span class="p">,</span><span class="s1">&#39;relu&#39;</span><span class="p">)</span>
@@ -14677,7 +14780,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Official accuracy: 0.7181417859685972
+<pre>Official accuracy: 0.5500043833534847
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">pipednn</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 16  12  11  19]
+ [ 12  23   9   8]
+ [ 67  34 340  96]
+ [ 21   9  27  40]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.14      0.28      0.18        58
+        More       0.29      0.44      0.35        52
+     On Time       0.88      0.63      0.74       537
+        Week       0.25      0.41      0.31        97
+
+    accuracy                           0.56       744
+   macro avg       0.39      0.44      0.40       744
+weighted avg       0.70      0.56      0.61       744
+
 </pre>
 </div>
 </div>
@@ -14695,14 +14848,14 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">KNeighborsClassifier</span>
 <span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;knn__n_neighbors&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
 <span class="p">}</span>
-<span class="n">knn</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),</span> <span class="p">(</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">PCA</span><span class="p">()),</span> <span class="p">(</span><span class="s1">&#39;knn&#39;</span><span class="p">,</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">7</span><span class="p">))])</span>
+<span class="n">knn</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;scaler&#39;</span><span class="p">,</span> <span class="n">StandardScaler</span><span class="p">()),(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="n">PCA</span><span class="p">()),</span> <span class="p">(</span><span class="s1">&#39;knn&#39;</span><span class="p">,</span><span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="mi">7</span><span class="p">))])</span>
 <span class="n">pipedknn</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">knn</span><span class="p">,</span><span class="n">param_grid</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">iid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">accuracies</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipedknn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">),</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Average accuracy:&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accuracies</span><span class="p">))</span>
@@ -14722,7 +14875,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Average accuracy: 0.7180059356260327
+<pre>Average accuracy: 0.6023977552359767
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">pipedknn</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 10   8  25  15]
+ [ 11  16  21   4]
+ [ 41  34 384  78]
+ [ 11  10  41  35]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.14      0.17      0.15        58
+        More       0.24      0.31      0.27        52
+     On Time       0.82      0.72      0.76       537
+        Week       0.27      0.36      0.31        97
+
+    accuracy                           0.60       744
+   macro avg       0.36      0.39      0.37       744
+weighted avg       0.65      0.60      0.62       744
+
 </pre>
 </div>
 </div>
@@ -14741,11 +14944,11 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="k">import</span> <span class="n">GaussianNB</span>
-<span class="n">nb</span> <span class="o">=</span> <span class="n">GaussianNB</span><span class="p">()</span>
+<span class="n">nb</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;nb&#39;</span><span class="p">,</span><span class="n">GaussianNB</span><span class="p">())])</span>
 <span class="n">accuracies</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">nb</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Average accuracy:&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accuracies</span><span class="p">))</span>
 </pre></div>
@@ -14764,7 +14967,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Average accuracy: 0.5659985180010448
+<pre>Average accuracy: 0.36450096130737797
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">nb</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 38   6   2  12]
+ [ 26  13   6   7]
+ [124  48 187 178]
+ [ 53   5   6  33]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.16      0.66      0.25        58
+        More       0.18      0.25      0.21        52
+     On Time       0.93      0.35      0.51       537
+        Week       0.14      0.34      0.20        97
+
+    accuracy                           0.36       744
+   macro avg       0.35      0.40      0.29       744
+weighted avg       0.72      0.36      0.43       744
+
 </pre>
 </div>
 </div>
@@ -14782,11 +15035,11 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">AdaBoostClassifier</span>
-<span class="n">ab</span> <span class="o">=</span> <span class="n">AdaBoostClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+<span class="n">ab</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;ab&#39;</span><span class="p">,</span><span class="n">AdaBoostClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">150</span><span class="p">))])</span>
 <span class="n">accuracies</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">ab</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Average accuracy:&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accuracies</span><span class="p">))</span>
 </pre></div>
@@ -14805,7 +15058,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Average accuracy: 0.719218766966059
+<pre>Average accuracy: 0.38206423073972745
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">ab</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 22   9  14  13]
+ [  9  28  10   5]
+ [118  26 234 159]
+ [ 29   6  25  37]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.12      0.38      0.19        58
+        More       0.41      0.54      0.46        52
+     On Time       0.83      0.44      0.57       537
+        Week       0.17      0.38      0.24        97
+
+    accuracy                           0.43       744
+   macro avg       0.38      0.43      0.36       744
+weighted avg       0.66      0.43      0.49       744
+
 </pre>
 </div>
 </div>
@@ -14823,18 +15126,12 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.ensemble</span> <span class="k">import</span> <span class="n">RandomForestClassifier</span>
-<span class="n">rf</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">param_grid</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;max_depth&#39;</span><span class="p">:</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span><span class="mi">55</span><span class="p">)),</span>
-    <span class="s1">&#39;min_samples_leaf&#39;</span><span class="p">:(</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span>
-    <span class="s1">&#39;max_features&#39;</span><span class="p">:(</span><span class="s1">&#39;sqrt&#39;</span><span class="p">,</span><span class="s1">&#39;log2&#39;</span><span class="p">)</span>
-<span class="p">}</span>
-<span class="n">pipedrf</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">rf</span><span class="p">,</span><span class="n">param_grid</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">scoring</span><span class="o">=</span><span class="s1">&#39;accuracy&#39;</span><span class="p">,</span> <span class="n">iid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">accuracies</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">pipedrf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">),</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">rf</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;rf&#39;</span><span class="p">,</span><span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span><span class="o">=</span><span class="mi">10</span><span class="p">))])</span>
+<span class="n">accuracies</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">rf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">),</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Official accuracy:&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accuracies</span><span class="p">))</span>
 </pre></div>
 
@@ -14852,7 +15149,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Official accuracy: 0.7585671253994791
+<pre>Official accuracy: 0.6533691550720879
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">pipedrf</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 15  12  20  11]
+ [ 11  27  12   2]
+ [ 38  24 428  47]
+ [ 18   4  52  23]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.18      0.26      0.21        58
+        More       0.40      0.52      0.45        52
+     On Time       0.84      0.80      0.82       537
+        Week       0.28      0.24      0.26        97
+
+    accuracy                           0.66       744
+   macro avg       0.42      0.45      0.43       744
+weighted avg       0.68      0.66      0.67       744
+
 </pre>
 </div>
 </div>
@@ -14871,10 +15218,10 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[55]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">votingclf</span> <span class="o">=</span> <span class="n">VotingClassifier</span><span class="p">(</span><span class="n">estimators</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;svc&#39;</span><span class="p">,</span> <span class="n">pipedsvm</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;rf&#39;</span><span class="p">,</span> <span class="n">rf</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;abdt&#39;</span><span class="p">,</span> <span class="n">ab</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;knn&#39;</span><span class="p">,</span> <span class="n">pipedknn</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nn&#39;</span><span class="p">,</span> <span class="n">pipednn</span><span class="p">)],</span> <span class="n">voting</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">votingclf</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">(</span><span class="n">steps</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;smt&#39;</span><span class="p">,</span><span class="n">SMOTE</span><span class="p">()),(</span><span class="s1">&#39;vc&#39;</span><span class="p">,</span><span class="n">VotingClassifier</span><span class="p">(</span><span class="n">estimators</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;svc&#39;</span><span class="p">,</span> <span class="n">pipedsvm</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;rf&#39;</span><span class="p">,</span> <span class="n">rf</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;knn&#39;</span><span class="p">,</span> <span class="n">pipedknn</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;nn&#39;</span><span class="p">,</span> <span class="n">pipednn</span><span class="p">)],</span> <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">voting</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">))])</span>
 <span class="n">accuracies</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">votingclf</span><span class="p">,</span> <span class="n">df_features</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Average accuracy:&#39;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">accuracies</span><span class="p">))</span>
 </pre></div>
@@ -14893,7 +15240,7 @@ Accuracy of decision tree classifier: 0.702013422818792
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Average accuracy: 0.7478193095036201
+<pre>Average accuracy: 0.638492905664145
 </pre>
 </div>
 </div>
@@ -14904,7 +15251,57 @@ Accuracy of decision tree classifier: 0.702013422818792
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">predicted_labels</span> <span class="o">=</span> <span class="n">cross_val_predict</span><span class="p">(</span><span class="n">votingclf</span><span class="p">,</span><span class="n">df_features</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Confusion matrix:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Classification report:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">classification_report</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">predicted_labels</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Confusion matrix:
+ [[ 17  10  16  15]
+ [ 11  23  14   4]
+ [ 46  30 405  56]
+ [ 18   5  45  29]]
+
+Classification report:
+               precision    recall  f1-score   support
+
+       Month       0.18      0.29      0.23        58
+        More       0.34      0.44      0.38        52
+     On Time       0.84      0.75      0.80       537
+        Week       0.28      0.30      0.29        97
+
+    accuracy                           0.64       744
+   macro avg       0.41      0.45      0.42       744
+weighted avg       0.68      0.64      0.66       744
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;finalized_model.sav&#39;</span>
