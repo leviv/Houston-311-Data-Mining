@@ -31,9 +31,12 @@ We then used the "SR Create Date" to determine the month in which the request wa
 
 The class label "Overdue" was then binned for classification models. We chose to bin the data into on time tasks (negative values), tasks done within a week past due date (0 < x < 7), tasks done within a month past due date (7 <= x < 30), tasks done over a month past due date (x >= 30).
 
+Most of the features were categorical, so we encoded them into numerical values in order for sklearn to process them correctly. Furthermore, we downsampled the dataset in order to speed up our training time.
 
 Challenges
 
 Results
+
+The Random Forest classifier performed the best with an accuracy of 0.7586. Since our dataset consisted mostly of categorical data, it would make sense for the Random Forest classifier to be the most accurate, since they handle categorical data well, due to the fact that the splits directly separate the categories. Furthermore, they are usually better when dealing with features that are highly correlated, which could be the case for our features related to region.
 
 Next Steps
